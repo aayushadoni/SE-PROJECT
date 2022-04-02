@@ -1,0 +1,954 @@
+<?php
+include 'connection.php';
+session_start();
+if(isset($_REQUEST['stdlog'])) //Login for Student
+{
+$u=$_POST['suname'];
+$p=$_POST['spass'];
+$result=mysql_query("select id from studreg where userstud='$u'
+and passtud='$p'");
+$row= mysql_fetch_assoc($result);
+$id=$row['id'];
+if(mysql_num_rows($result)>0)
+{
+$_SESSION['uid']=$id;
+header("location:stuhome.php");
+?>
+ <script>
+alert("You have logged in");
+ </script>
+ <?php
+}
+else
+{
+?>
+ <script>
+alert("Please Sign-Up first");
+ </script>
+
+<?php
+}
+}
+if(isset($_REQUEST['faclog'])) //Login for Faculty
+{
+$u=$_POST['funame'];
+$p=$_POST['fpass'];
+$result=mysql_query("select id from facreg where userfac='$u' and
+ password='$p'");
+$row= mysql_fetch_assoc($result);
+$id=$row['id'];
+if(mysql_num_rows($result)>0)
+{
+$_SESSION['uid']=$id;
+header("location:fachome.php");
+?>
+ <script>
+alert("You have logged in");
+ </script>
+ <?php
+}
+else
+{
+?>
+ <script>
+alert("Please Sign-Up first");
+ </script>
+ <?php
+}
+}
+if(isset($_REQUEST['adminlog'])){ //Login for Admin
+$u=$_POST['adusn'];
+$p=$_POST['adpass'];
+$result=mysql_query("select * from adminreg where username='$u' and
+ password='$p'");
+if(mysql_num_rows($result)>0)
+{
+$_SESSION['useradmin']=$u;
+header("location:adhome.php");
+?>
+ <script>
+alert("You have logged in");
+ </script>
+ <?php
+}
+else
+{
+?>
+ <script>
+alert("Please Sign-Up first");
+ </script>
+ <?php
+}
+}
+?>
+ <!DOCTYPE html>
+ <html>
+ <head>
+ <title>
+College Social Network
+ </title>
+ <link rel="stylesheet" href="navdes.css">
+ <script>
+
+function val()
+{
+if(!/^[a-zA-Z]*$/g.test(document.myForm.suname.value))
+{
+alert('Enter Only Name');
+document.myForm.suname.focus();
+return false;
+}
+return true;
+}
+function val1()
+{
+if(!/^[a-zA-Z]*$/g.test(document.myForm1.adusn.value))
+{
+alert('Enter Only Name');
+document.myForm.adusn.focus();
+return false;
+}
+return true;
+}
+function val2()
+{
+if(!/^[a-zA-Z]*$/g.test(document.myForm2.funame.value))
+{
+alert('Enter Only Characters');
+document.myForm.funame.focus();
+return false;
+}
+return true;
+}
+function myFunction() {
+var x = document.getElementById("myTopnav");
+if (x.className === "topnav") {
+x.className += " responsive";
+} else {
+x.className = "topnav";
+}
+}
+ </script>
+ </head>
+ <link href="css/bootstrap.css" rel="stylesheet" />
+ <link href="css/bootstrap-theme.css" rel="stylesheet" />
+ <meta name="viewport" content="width=device-width intital-scale=1">
+ <style>
+.box/* Used for the rectangular Div */
+{
+ width:85%;
+ margin-left:auto;
+ margin-right:auto;
+ border: 1px solid;
+ padding:154px;
+ margin-top:10%;
+text-align:center;
+ border-style:double;
+}
+
+.nav-pills /*used for the Menu Bar */
+{
+font-size:20px;
+ background-color:#20282e;
+ margin-top:0px;
+ padding:25px;
+}
+.header
+{
+ position: sticky;
+top: 0;
+z-index: 100;
+ background-color:black;
+}
+.login {
+ margin: 20px auto;
+ width: 800px;
+}
+.login-screen {
+ background-color: #FFF;
+ padding: 20px;
+ border-radius: 5px
+}
+.app-title {
+text-align: center;
+color: #777;
+}
+
+.login-form {
+text-align: center;
+}
+.control-group {
+ margin-bottom: 10px;
+}
+input {
+text-align: center;
+ background-color: #ECF0F1;
+ border: 2px solid transparent;
+ border-radius: 3px;
+font-size: 16px;
+font-weight: 200;
+ padding: 10px 0;
+ width: 250px;
+transition: border .5s;
+}
+input:focus {
+ border: 2px solid #3498DB;
+ box-shadow: none;
+}
+.btn {
+ border: 2px solid transparent;
+ background: #3498DB;
+color: #ffffff;
+font-size: 16px;
+line-height: 25px;
+ padding: 10px 0;
+text-decoration: none;
+text-shadow: none;
+ border-radius: 3px;
+ box-shadow: none;
+transition: 0.25s;
+display: block;
+ width: 250px;
+ margin: 0 auto;
+}
+.btn:hover {
+ background-color: #2980B9;
+}
+.login-link {
+font-size: 12px;
+color: #444;
+display: block;
+ margin-top: 12px;
+}
+.container-fluid {
+ padding-right: 0px !important;
+ padding-left: 0px !important;
+}
+#myPageContent, section {
+height:100% !important;
+ width:100% !important;
+}
+/* Slider */
+#textSlider.row {
+ position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+ width: 100% !important;
+}
+#textSlider div {
+color: #FFF;
+font-family: 'Lato', sans-serif;
+text-transform: uppercase;
+}
+.iamCol {
+text-align: right;
+float: left;
+font-weight: 300;
+font-size:30pt;
+}
+.iamCol p:nth-child(2) { margin-top: -20pt !important; }
+.slideCol {
+text-align: left;
+overflow: hidden;
+font-weight: 900;
+font-size:70pt;
+display: block;
+ white-space: nowrap;
+}
+.slideCol p { margin: 0px !important; }
+
+.scroller {
+height: 70pt;
+line-height: 70pt;
+overflow: hidden;
+}
+.scroller .inner { animation: 10s normal infinite running scroll; }
+@keyframes scroll {
+0% {margin-top: 0px;}
+15% {margin-top: 0px;}
+25% {margin-top: -70pt;}
+40% {margin-top: -70pt;}
+50% {margin-top: -140pt;}
+65% {margin-top: -140pt;}
+75% {margin-top: -210pt;}
+90% {margin-top: -210pt;}
+100% {margin-top: 0px;}
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) and (max-width : 765px) {
+#textSlider.row { margin-right: 0px !important; margin-left:
+0px !important; }
+.iamCol { text-align: center; font-size:25pt; }
+.iamCol p { display: inline !important; }
+.slideCol { font-size: 38pt; text-align: center; margin-top:
+-20px; }
+}
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) and (max-width : 992px) {
+#textSlider.row { margin-right: 0px !important; margin-left:
+0px !important; }
+.iamCol { text-align: center; font-size:30pt; }
+.iamCol p { display: inline !important; }
+.slideCol { font-size: 50pt; text-align: center; margin-top:
+5px; }
+}
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) and (max-width : 1200px) {
+#textSlider.row { margin-right: 0px !important; margin-left:
+0px !important; }
+.iamCol { text-align: right; font-size:30pt; }
+.slideCol { font-size: 55pt; text-align: left; }
+}
+
+</style>
+ <script src="js/bootstrap.min.js"></script>
+ <link href="backdes.css" rel="stylesheet" />
+ <body >
+ <div class="topnav header nav-pills" id="myTopnav" style="background-
+color:#20282e; padding:15px;">
+ <a href="index.php" > <img src="ASHOK logo1.png" height="45px"
+ width="55px" /></a>
+ <div style="margin-left:50%">
+ <a href="#home" class="active "><span class="glyphicon glyphicon-home">
+ </span>Home</a>
+ <a href="#about" > <span class="glyphicon glyphicon-info-sign">
+ </span>About</a>
+ <a href="#student"> <span class="glyphicon glyphicon-user">
+ </span>Student</a>
+ <a href="#admin"> <span class="glyphicon glyphicon-cog"></span>
+ Admin</a>
+ <a href="#faculty"> <span class="glyphicon glyphicon-
+ briefcase"></span> Faculty</a>
+ </div>
+ <a href="javascript:void(0);" class="icon"
+onclick="myFunction()">&#9776;</a>
+ </div>
+ <div class="container" id="about" >
+ <div class="row " >
+ <div class="col-md-12" style="margin-top:10%;" >
+ <div id="myPageContent" class="container-fluid" >
+ <section id="home">
+
+<div id="textSlider" class="row" >
+ <div class="col-xs-12 col-sm-12 col-md-3 col-lg-4 iamCol">
+ <p>College Social </p>
+ <p>Network</p>
+ </div>
+ <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8 slideCol">
+ <div class="scroller">
+ <div class="inner">
+ <p>Dreamers</p>
+ <p>Thinkers</p>
+ <p>Doers</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+ </div>
+ </div>
+ <div class="col-md-12 centered" style="margin-bottom:40%;margin-
+top:20%;">
+ <h3>About</h3>
+ </div>
+
+<div class="col-md-8 col-md-offset-2" id="student" style="margin-
+ bottom:40%;margin-top:20%;background-color:white;"
+onmouseover="this.style.background='#3498DB';"
+onmouseout="this.style.background='white';this.style.color='black';"><!--
+For Student -->
+ <h3 class="well" style="margin-bottom:10%;"> <center> Login </center></h3>
+ <h3><center> Student Login </center> </h3>
+ <form method="POST" name="myForm" sttyle="margin-top:90%" >
+ <div class="login-screen">
+ <div class="app-title">
+ </div>
+ <div class="login-form">
+ <div class="control-group">
+ <span class="glyphicon glyphicon-user"></span> <input type="text"
+ maximum="8" name="suname" placeholder="Username" >
+ </div>
+ <div class="control-group">
+ <span class="glyphicon glyphicon-lock"></span> <input
+type="password" maximum="8" name="spass" placeholder="Password" >
+ <label class="login-field-icon fui-lock"
+for="login-pass"></label>
+ </div>
+ <button class="btn btn-primary btn-large btn-
+ block" name="stdlog" onclick="val()"><span class="glyphicon glyphicon-log-
+in"> </span> &nbsp;Login</button>
+ <a href="changepass.php" style="text-decoration:none;color:black;
+"> Forget/Reset Password </a>
+ </div>
+ </div>
+ </form>
+ </div><!-- End For Div of Student -->
+ <div class="col-md-8 col-md-offset-2" id="admin" style="margin-
+ bottom:40%;margin-top:20%;background-color:white;"
+onmouseover="this.style.background='#3498DB';"
+onmouseout="this.style.background='white';this.style.color='black';" ><!--
+For Admin-->
+
+<h3 class="well" style="margin-bottom:10%;"> <center> Login </center></h3>
+ <center> <h3>Admin Login</h3> </center>
+ <form method="POST" name="myForm1" >
+ <div class="login-screen">
+ <div class="app-title">
+ </div>
+ <div class="login-form">
+ <div class="control-group">
+ <span class="glyphicon glyphicon-user"></span> <input type="text"
+class="login-field" id="utxt" maximum="8" name="adusn"
+ placeholder="Username" >
+ </div>
+ <div class="control-group">
+ <span class="glyphicon glyphicon-lock"></span> <input
+type="password" class="login-field" maximum="8" name="adpass"
+ placeholder="Password" >
+ </div>
+ <button class="btn btn-primary btn-large btn-block" name="adminlog"
+onclick="val1()"><span class="glyphicon glyphicon-log-in"> </span> &nbsp;
+Login</button>
+ </div>
+ </div>
+ </form>
+ </div>
+ <div class="col-md-8 col-md-offset-2" id="faculty" style="margin-
+ bottom:40%;margin-top:20%;background-color:white;"
+onmouseover="this.style.background='#3498DB';"
+onmouseout="this.style.background='white';this.style.color='black';" ><!--
+For Faculty -->
+ <form method="POST" name="myForm2" >
+ <h3 class="well" style="margin-bottom:10%;"> <center> Login
+ </center></h3><center> <h3> Faculty Login </h3> </center><div
+class="login-screen" >
+ <div class="app-title"></div>
+ <div class="login-form" >
+ <div class="control-group">
+<span class="glyphicon glyphicon-user"></span> <input type="text"
+class="login-field" id="utxt" maximum="8" name="funame"
+ placeholder="Username">
+ <label class="login-field-icon fui-user" for="login-name"></label>
+ </div>
+ <div class="control-group">
+ <span class="glyphicon glyphicon-lock"></span> <input type="password"
+class="login-field" placeholder="password" maximum="8" name="fpass"
+ placeholder="Password" >
+ <label class="login-field-icon fui-lock" for="login-pass"></label>
+ </div>
+ <button class="btn btn-primary btn-large btn-block" onclick="val2()"
+name="faclog"><span class="glyphicon glyphicon-log-in"> </span> &nbsp;
+Login</button>
+ <a href="fchangepass.php" style="text-decoration:none;color:black; " >
+Forget/Reset Password </a></div>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+ <div class="navbar navbar-default navbar-fixed-bottom">
+ <div class="container">
+ <p class="text-justify"><strong><center> College Social Network
+&copy;</center> </strong> </p>
+ </div>
+ </div>
+ </body>
+ </html>
+
+
+Adminhome.php
+ 
+ <?php
+include 'connection.php';
+if(isset($_REQUEST['rfac']))
+{
+$fname=$_POST['fname'];
+$fdes=$_POST['fdesig'];
+$fdob=$_POST['dob'];
+$fmail=$_POST['femail'];
+$funame=$_POST['funame'];
+$fpass=$_POST['fpass'];
+$fmob=$_POST['mob'];
+$fprofile=$_FILES['fProfile']['name'];
+$ftemp=$_FILES['fProfile']['tmp_name'];
+if($_FILES['fProfile']['size'] > 2000000 )
+{
+echo "<script>alert('File to Large Please Select another
+File')</script>";
+}
+else
+{
+ move_uploaded_file($ftemp,"profile/$fprofile");
+$val=mysql_query("select userfac,password from facreg where
+userfac='$funame' and password='$fpass' ");
+if(mysql_num_rows($val)>0)
+{
+echo "<script> alert('Already Registered'); </script>";
+}
+else
+{
+/*Start of SMS Package */
+// Authorisation details.
+$username = "abcxyz@gmail.com";
+$hash =
+"486dbbf9b90cbe85b8e6581058e0616b8d8747ecb537d3dbc1000d1e0df76b66";
+// Config variables. Consult http://api.textlocal.in/docs for more info.
+$test = "0";
+// Data for text message. This is the text message data.
+$sender = "TXTLCL"; // This is who the message appears to be from.
+// $numbers = "8879920190,$fmob";
+// A single number or a comma-seperated list of numbers
+$message = " Your Username=".$funame."password=".$fpass." now you are a
+ part of college Socail network .";
+// 612 chars or less
+// A single number or a comma-seperated list of numbers
+$message = urlencode($message);
+$data =
+"username=".$username."&hash=".$hash."&message=".$message."&sender=".$sende
+r."&numbers=".$fmob."&test=".$test;
+$ch = curl_init('http://api.textlocal.in/send/?');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$result = curl_exec($ch); // This is the result from the API
+curl_close($ch);
+/*
+echo "<pre>";
+ print_r($result);
+exit;
+End of SMS Package */
+$query=mysql_query("INSERT INTO
+facreg(name,Designation,DOB,email,fac_pic,mob,userfac,password)
+ Values('$fname','$fdes','$fdob','$fmail','$fprofile','$fmob','$funame','$fp
+ass')");
+if($query)
+{
+echo "<script> alert('Faculty Member Registered');</script>";
+// die(mysql_error());
+// echo "<script> window.location.href='adhome.php';</script>" ;
+}
+}
+}
+}
+if (isset($_REQUEST['rstud'])){
+$sname=$_POST['sname'];
+$suname=$_POST['suname'];
+$spass=$_POST['spass'];
+$sem=$_POST['sem'];
+$sreg=$_POST['sreg'];
+$dob=$_POST['dob'];
+$smob=$_POST['smob'];
+$smail=$_POST['smail'];
+$sprofile=$_FILES['sProfile']['name'];
+$stemp=$_FILES['sProfile']['tmp_name'];
+if($_FILES['sProfile']['size'] > 2000000 )
+{
+echo "<script>alert('File to Large Please Select another
+File')</script>";
+}
+else
+{
+ move_uploaded_file($stemp,"sprofile/$sprofile");
+$val1=mysql_query("select userstud,passtud from studreg where
+userstud='$suname' and passtud='$spass' ");
+if(mysql_num_rows($val1)>0) //Checking the value already exists.
+{
+?>
+ <script>
+alert(" You have already Registered");
+ </script>
+ <?php
+}
+else {
+/*Start of SMS Package */
+// Authorisation details.
+$username = "naikashok08@gmail.com";
+$hash =
+"486dbbf9b90cbe85b8e6581058e0616b8d8747ecb537d3dbc1000d1e0df76b66";
+// Config variables. Consult http://api.textlocal.in/docs
+for more info.
+$test = "0";
+// Data for text message. This is the text message data.
+$sender = "TXTLCL"; // This is who the message appears to be
+from.
+// $numbers = "8879920190,$smob";
+// A single number or a comma-seperated list of numbers
+$message = " Your Username=".$suname." and
+ password=".$spass." now you are a part of College Socail Network .";
+// 612 chars or less
+// A single number or a comma-seperated list of numbers
+$message = urlencode($message);
+$data =
+"username=".$username."&hash=".$hash."&message=".$message."&sender=".$sende
+r."&numbers=".$smob."&test=".$test;
+$ch = curl_init('http://api.textlocal.in/send/?');
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$result = curl_exec($ch); // This is the result from the
+ APIcurl_close($ch);
+$query=mysql_query("INSERT INTO
+studreg(name,semester,reg_no,dob,stu_pic,mob,email,userstud,passtud)
+ Values('$sname','$sem','$sreg','$dob','$sprofile','$smob','$smail','$suname
+','$spass')");
+if($query)
+{
+echo "<script> alert('Student Registred');</script>";
+echo "<script> window.location.href='adhome.php';</script>";
+}
+}
+}
+}
+?>
+ <!DOCTYPE html>
+ <html>
+ <head>
+ <title>
+College Social Network
+ </title>
+ </head>
+ <link rel="stylesheet" href="navdes.css">
+ <link rel="stylesheet" href="formdes.css">
+ <link rel="stylesheet" href="restable.css">
+ <link href="css/bootstrap.css" rel="stylesheet" />
+ <link href="css/bootstrap-theme.css" rel="stylesheet" />
+ <meta name="viewport" content="width=device-width intital-scale=1">
+ <link href="backdes2.css" rel="stylesheet" />
+ <style>
+table{
+ margin: 0 auto;
+}
+.box1
+{
+ width:85%;
+ margin-left:auto;
+ margin-right:auto;
+ border:solid;
+ padding:50px;
+ margin-top:10%;
+font-size:large;
+}
+.nav-pills
+{
+font-size:1.7em;
+ background-color:black;
+opacity:.8;
+ margin-top:0px;
+ padding:15px;
+}
+.header
+{
+ position: sticky;
+top: 0;
+z-index: 100;
+}
+ </style>
+ <script>
+function alert_once() {
+var size=2000000;
+var file_size=document.getElementById('file_upload').files[0].size;
+if(file_size>size)
+{
+alert('File Size to Large');
+return false;
+}
+return true;
+}
+function validate1() {
+var size=2000000;
+var file_size=document.getElementById('file_up').files[0].size;
+if(file_size>size)
+{
+alert('File Size to Large');
+return false;
+}
+return true;
+}
+function myFunction() {
+var x = document.getElementById("myTopnav");
+if (x.className === "topnav") {
+x.className += " responsive";
+} else {
+x.className = "topnav";
+}
+}
+</script>
+ <body>
+ <div class="topnav header nav-pills" id="myTopnav" style="background-
+color:#20282e; padding:10px;">
+ <a href="index.php" > <img src="ASHOK logo1.png" height="45px"
+ width="55px" /></a>
+ <div style="margin-left:20%">
+ <a href="adhome.php" class="active " ><span class="glyphicon glyphicon-
+home"> </span>Home</a>
+ <a href="#regfact" > <span class="glyphicon glyphicon glyphicon-
+ pencil"> </span>Register Faculty</a>
+ <a href="#regstud"> <span class="glyphicon glyphicon-pencil">
+ </span>Register Student</a>
+ <a href="#apppost"> <span class=" glyphicon glyphicon-
+check"></span> Approve Post</a>
+ <a href="delstudent.php"> <span class=" glyphicon glyphicon-
+cog"></span> Manage Student</a>
+ <a href="studlogout.php"> <span class=" glyphicon glyphicon-log-
+out"></span> Logout</a>
+ </div>
+ <a href="javascript:void(0);" class="icon"
+onclick="myFunction()">&#9776;</a>
+ </div>
+ <?php
+session_start();
+if($_SESSION['useradmin']=="")
+{
+header("location:index.php");
+}
+?>
+ <div id="regfact" class="container" style="border:solid ;background:
+#3AAFAB;
+color: black;">
+<h3 class="text-center">Register Faculty</h3>
+ <form method="POST" class="form form-group-lg" style ="padding-
+top:12px;" action="" enctype="multipart/form-data" >
+ <ul class="flex-outer">
+ <li>
+ <label for="first-name"> <span class="glyphicon glyphicon-
+user"> </span> Name</label>
+ <input type="text" id="first-name" class="form-control"
+name="fname" pattern="[A-Za-z\s]{1,32}" title="Name Should Contains
+Only Characters" required >
+ </li>
+ <li>
+ <label for="for-des"><span class="glyphicon glyphicon-
+ briefcase"> </span> Designation:</label>
+ <input type="text" id="last-name" class="form-control"
+name="fdesig" pattern="[A-Za-z]{1,32}" title="Designation Should
+Contains Only Characters" required >
+ </li>
+ <li>
+ <label for="Date of Birth"><span class="glyphicon glyphicon-
+calendar"> </span> Date of Birth:</label>
+ <input type="text" onfocus="(this.type='date')"
+class="form-control" name="dob" required/>
+ </li>
+ <li>
+ <label for="email"> <span class="glyphicon glyphicon-
+envelope"> </span>Email</label>
+ <input type="email" id="email" name="femail" class="form-
+control" >
+ </li>
+ <li>
+ <label for="pofil-pic"> <span class="glyphicon glyphicon-
+camera"> </span>Profile-Picture:</label>
+ <input type="file" name="fProfile" onChange='alert_once()'
+class="form-control" id="file_upload" accept=".jpg,.png,.JPEG" />
+ </li>
+<li>
+ <label for="phone"><span class="glyphicon glyphicon-phone">
+ </span>Mobile No</label>
+ <input type="tel" id="phone" class="form-control"
+name="mob" >
+ </li>
+ <li>
+ <label for="phone"><span class="glyphicon glyphicon-pencil">
+ </span>Username:</label>
+ <input type="text" name="funame" class="form-control"
+ pattern="[A-Za-z\s]{1,32}" required >
+ </li>
+ <li>
+ <label for="phone"><span class="glyphicon glyphicon-lock">
+ </span>Password:</label>
+ <input type="text" maximum="8" name="fpass" class="form-
+control" >
+ </li>
+ <button class="btn btn-primary pull-right " name="rfac" ><span
+class="glyphicon glyphicon-pencil"></span>Register </button>
+ <button type="reset " class="btn btn-primary " name="refac" >Reset
+ </button>
+ </form>
+ </div>
+ <div id="regstud" class="container" style="border:solid ;background:
+#3AAFAB;margin-top:10%;
+color: black;">
+ <h3 class="text-center">Register Student</h3>
+ <form class=" form-group-lg"method="POST" style ="padding-
+top:12px;" action="" enctype="multipart/form-data" >
+ <ul class="flex-outer">
+ <li>
+ <label for="first-name"> <span class="glyphicon glyphicon-
+user"> </span> Name:</label>
+<input type="text" class="form-control" name="sname"
+ pattern="[A-Za-z\s]{1,32}" title="Name Should Contains Only Characters"
+required >
+ </li>
+ <li>
+ <label for="for-des"><span class="glyphicon glyphicon-
+education"> </span> Semester:</label>
+ <select class="form-control"
+name="sem"><option>1<sup>st</sup> Semester</option>
+ <option>2<sup>nd</sup> Semester</option>
+ <option>3<sup>rd</sup> Semester</option>
+ <option>4<sup>th</sup> Semester</option>
+ <option>5<sup>th</sup> Semester</option>
+ <option>6<sup>th</sup> Semester</option>
+ </select>
+ </li>
+ <li>
+ <li>
+ <label for="first-name"> <span class="glyphicon glyphicon-
+user"> </span> Register Number:</label>
+ <input type="text" type="text" class="form-control"
+ maximum="8" name="sreg" pattern="[A-Za-z0-9]+" title="Name Should
+Contains Only Characters" required > </li> <li>
+ <label for="Date of Birth"><span class="glyphicon glyphicon-calendar">
+ </span> Date of Birth:</label>
+ <input type="text" onfocus="(this.type='date')"
+class="form-control" name="dob" required/>
+ </li>
+ <li>
+ <label for="email"> <span class="glyphicon glyphicon-
+envelope"> </span>Email</label>
+ <input type="email" class="form-control" id="email"
+name="smail" >
+ </li>
+ <li>
+<label for="pofil-pic"> <span class="glyphicon glyphicon-
+camera"> </span>Profile-Picture:</label>
+ <input type="file" name="sProfile" class="form-control"
+onChange='validate1()' id="file_up" accept=".jpg,.png,.JPEG" />
+ </li>
+ <li>
+ <label for="phone"><span class="glyphicon glyphicon-phone">
+ </span>Mobile No</label>
+ <input type="tel" id="phone" class="form-control"
+ pattern="[0-9]+" name="smob" >
+ </li>
+ <li>
+ <label for="phone"><span class="glyphicon glyphicon-pencil">
+ </span>Username:</label>
+ <input type="text" name="suname" class="form-control"
+ pattern="[A-Za-z0-9]+" required >
+ </li>
+ <li>
+ <label for="phone"><span class="glyphicon glyphicon-lock">
+ </span>Password:</label>
+ <input type="text" maximum="8" class="form-control"
+name="spass" required >
+ </li>
+ <button class="btn btn-primary pull-right " name="rstud" ><span
+class="glyphicon glyphicon-pencil"></span>Register </button>
+ <button type="reset " class="btn btn-primary " name="refac" >Reset
+ </button>
+ </form>
+ </div>
+ <div class="box1" id="apppost" style="padding:90px;">
+ <?php
+$st=0;
+$tb=mysql_query("select * from Feed where app_post='$st' order
+ by id DESC ");
+$res=mysql_num_rows($tb);
+if($res == 0)
+{
+echo "<h3 ><center> No Post Uploaded</center></h3>";
+}
+else
+{
+echo "<div class='table'>
+ <div class='row header'>
+ <div class='cell'>
+Post Id
+ </div>
+ <div class='cell'>
+Username
+ </div>
+ <div class='cell'>
+Post Text
+ </div>
+ <div class='cell'>
+Image
+ </div>
+ <div class='cell'>
+Upload Time
+ </div>
+ <div class='cell'>
+Upload Date
+ </div>
+ <div class='cell'>
+ Approve Post
+ </div>
+ </div>";
+while($res=mysql_fetch_array($tb))
+{
+$u=$res['username'];
+$tb1=mysql_query("select stu_pic from studreg where
+userstud='$u'");
+$res1=mysql_fetch_assoc($tb1);
+$p1= $res['image'];
+$p2=$res1['stu_pic'];
+?>
+ <div class="row">
+ <div class="cell" data-title="Name">
+ <?php echo $res['id']; ?>
+ </div>
+ <div class="cell" data-title="Username">
+ <?php echo $res['username']; ?>
+ </div>
+ <div class="cell" data-title="PostText">
+ <?php echo $res['ptext']; ?>
+ </div>
+ <div class="cell" data-title="Image">
+ <?php echo "<img src='images/$p1' width='100px'
+height='100px' >" ?>
+ </div>
+ <div class="cell" data-title="Upload Time">
+ <?php echo $res['uptime']; ?>
+ </div>
+ <div class="cell" data-title="Upload Date">
+ <?php echo $res['upldate']; ?>
+ </div>
+ <div class="cell" data-title="Approve">
+<form method="POST"> <input type="text" name="pid"
+value="<?php echo $res['id'] ?>" style="display:none;"/> <button
+class="btn btn-primary" name="sub" type="submit">Approve</button> <br/>
+ <br/> <button class="btn btn-primary" name="del" type="submit"
+onclick="return confirm('Do You want to delete it');" >Delete</button>
+ </form>
+ </div>
+ </div>
+ <?php
+}}
+?>
+ </div>
+ <?php
+if(isset($_POST['sub'])){
+$query=mysql_query("Update feed set app_post='1' where app_post='0' ");
+if($query)
+{
+echo "<script> alert('Post Approved'); </script>";
+echo "<script> window.location.href='adhome.php'</script>";
+}
+else
+{
+die(mysql_error());
+}
+}
+if(isset($_POST['del'])){
+$pid=$_POST['pid'];
+$del=mysql_query("delete from feed where id='$pid'");
+if($del)
+{
+echo "<script> alert('Post Deleted');</script>";
+echo "<script> window.location.href='adhome.php'; </script>";
+}
+else
+{
+die(mysql_error());
+}
+}
+?>
+ </div>
+ <div id="footer">
+ </div>
+ </body>
+ </html>
+
